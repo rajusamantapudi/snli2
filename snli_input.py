@@ -13,8 +13,6 @@ def init_snli(fname):
     k = 0
     with open(fname, 'rb') as f:
         for line in f:
-            if k> 30:
-                break
             k+= 1
             line = line.decode('utf-8')
             line = line.lower()

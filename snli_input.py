@@ -21,8 +21,8 @@ def init_snli(fname):
             # ignore items without a gold label
                 continue
 
-            sentence1_parse = data['sentence1_parse']
-            sentence2_parse = data['sentence2_parse']
+            sentence1_parse = data['sentence1']
+            sentence2_parse = data['sentence2']
             label = data['gold_label']
 
             t = {'sent1': sentence1_parse, 'sent2':sentence2_parse , 'label':label}

@@ -349,8 +349,8 @@ class DMN_PLUS(object):
         
         # shuffle data
         p = np.random.permutation(len(data[0]))
-        qp, ip, ql, il, im, a, r = data
-        qp, ip, ql, il, im, a, r = qp[p], ip[p], ql[p], il[p], im[p], a[p], r[p] 
+        qp, ip, ql, il, im, a  = data
+        qp, ip, ql, il, im, a  = qp[p], ip[p], ql[p], il[p], im[p], a[p] 
 
         for step in range(total_steps):
             index = range(step*config.batch_size,(step+1)*config.batch_size)

@@ -13,6 +13,8 @@ def init_snli(fname):
     k = 0
     with open(fname, 'rb') as f:
         for line in f:
+            if k> 30:
+                break
             k+= 1
             line = line.decode('utf-8')
             line = line.lower()
@@ -221,6 +223,7 @@ def load_snli(config, split_sentences=False):
 
     inputs, questions, answers, input_masks = train_data if config.train_mode else test_data
 
+
     if split_sentences:
         input_lens, sen_lens, max_sen_len = get_sentence_lens(inputs)
         max_mask_len = max_sen_len
@@ -230,10 +233,18 @@ def load_snli(config, split_sentences=False):
         max_mask_len = np.max(mask_lens)
 
     q_lens = get_lens(questions)
-
     max_q_len = np.max(q_lens)
-    max_input_len = min(np.max(input_lens), config.max_allowed_inputs)
-    
+    max_input_len = min( np.max(input_lens), config.max_allowed_inputs)
+
+    if config.train_mode:
+        val_q_len = get_lens(val_data[1])
+        val_input_len = get_lens(val_data[0])
+        val_mask_len = get_lens(val_data[3])
+
+        max_q_len = max(max_q_len, np.max(val_q_len))
+        max_input_len = min( max(np.max(input_lens),np.max(val_input_len)), config.max_allowed_inputs)
+        max_mask_len = max(max_mask_len, np.max(val_mask_len))
+
     #pad out arrays to max
     if split_sentences:
         inputs = pad_inputs(inputs, input_lens, max_input_len, "split_sentences", sen_lens, max_sen_len)
@@ -249,15 +260,8 @@ def load_snli(config, split_sentences=False):
 
     if config.train_mode:
         train = questions, inputs, q_lens, input_lens, input_masks, answers
-        val_q_len = get_lens(val_data[1])
-        val_input_len = get_lens(val_data[0])
-        val_mask_len = get_lens(val_data[3])
-        valid = val_data[1], val_data[0], val_q_len, val_input_len , val_data[3], val_data[2]
-
-        max_input_len = min( max(np.max(input_lens),np.max(val_input_len)), config.max_allowed_inputs)
-        max_q_len = max(max_q_len, np.max(val_q_len))
-        max_mask_len = max(max_mask_len, np.max(val_mask_len))
-        # max_input_len is the same with max_mask_len here
+        val_input_mask = pad_inputs(val_data[3], val_mask_len, max_mask_len, "mask")
+        valid = pad_inputs(val_data[1], val_q_len, max_q_len), pad_inputs(val_data[0], val_input_len , max_input_len), val_q_len, val_input_len ,val_input_mask , np.stack(val_data[2])
 
         return train, valid, word_embedding, max_q_len, max_input_len, len(vocab)
 

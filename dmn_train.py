@@ -89,7 +89,7 @@ for run in range(num_runs):
                     print 'Saving weights'
                     best_overall_val_loss = best_val_loss
                     best_val_accuracy = valid_accuracy
-                    saver.save(session, 'weights/snli.weights')
+                    saver.save(session, 'snli.weights')
 
             # anneal
             if train_loss>prev_epoch_loss*model.config.anneal_threshold:

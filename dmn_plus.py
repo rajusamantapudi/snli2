@@ -11,7 +11,7 @@ import snli_input
 class Config(object):
     """Holds model hyperparams and data information."""
 
-    batch_size = 100
+    batch_size = 20
     embed_size = 80
     hidden_size = 80
 
@@ -38,7 +38,7 @@ class Config(object):
     anneal_threshold = 1000
     anneal_by = 1.5
 
-    num_hops = 3
+    num_hops = 1
     num_attention_features = 4
 
     max_allowed_inputs = 200

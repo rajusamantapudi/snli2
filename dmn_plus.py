@@ -11,7 +11,7 @@ import snli_input
 class Config(object):
     """Holds model hyperparams and data information."""
 
-    batch_size = 20
+    batch_size = 100
     embed_size = 80
     hidden_size = 80
 
@@ -38,7 +38,7 @@ class Config(object):
     anneal_threshold = 1000
     anneal_by = 1.5
 
-    num_hops = 1
+    num_hops = 3
     num_attention_features = 4
 
     max_allowed_inputs = 200
@@ -333,7 +333,6 @@ class DMN_PLUS(object):
 
         # pass memory module output through linear answer module
         output = self.add_answer_module(output, q_vec)
-
         return output
 
 
@@ -346,6 +345,7 @@ class DMN_PLUS(object):
         total_steps = len(data[0]) / config.batch_size
         total_loss = []
         accuracy = 0
+        output = []
         
         # shuffle data
         p = np.random.permutation(len(data[0]))
@@ -367,6 +367,8 @@ class DMN_PLUS(object):
                 train_writer.add_summary(summary, num_epoch*total_steps + step)
 
             answers = a[step*config.batch_size:(step+1)*config.batch_size]
+            print(answers)
+            output.append(answers)
             accuracy += np.sum(pred == answers)/float(len(answers))
 
 
@@ -379,7 +381,11 @@ class DMN_PLUS(object):
 
         if verbose:
             sys.stdout.write('\r')
-
+        label_map = {1:'entailment', 0:'neutral', 2:'contradiction'}
+        with open('test.result','w') as f:
+            for line in output:
+                for x in line:
+                    f.write(label_map[x]+'/n')
         return np.mean(total_loss), accuracy/float(total_steps)
 
 

@@ -5,7 +5,6 @@ import time
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-b", "--babi_task_id", help="specify babi task 1-20 (default=1)")
 parser.add_argument("-t", "--dmn_type", help="specify type of dmn (default=original)")
 args = parser.parse_args()
 
@@ -20,14 +19,12 @@ elif dmn_type == "plus":
 else:
     raise NotImplementedError(dmn_type + ' DMN type is not currently implemented')
 
-if args.babi_task_id is not None:
-    config.babi_id = args.babi_task_id
 
 config.strong_supervision = False
 
 config.train_mode = False
 
-print 'Testing DMN ' + dmn_type + ' on babi task', config.babi_id
+print 'Testing DMN ' + dmn_type
 
 # create model
 with tf.variable_scope('DMN') as scope:
@@ -46,7 +43,7 @@ with tf.Session() as session:
     session.run(init)
 
     print '==> restoring weights'
-    saver.restore(session, 'weights/task' + str(model.config.babi_id) + '.weights')
+    saver.restore(session, 'snli.weights')
 
     print '==> running DMN'
     test_loss, test_accuracy = model.run_epoch(session, model.test)

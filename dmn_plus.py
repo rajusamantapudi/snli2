@@ -385,7 +385,7 @@ class DMN_PLUS(object):
         with open('test.result','w') as f:
             for line in output:
                 for x in line:
-                    f.write(label_map[x]+'/n')
+                    f.write(label_map[x]+'\n')
         return np.mean(total_loss), accuracy/float(total_steps)
 
 
